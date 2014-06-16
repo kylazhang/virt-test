@@ -103,7 +103,7 @@ class VMXMLBase(base.LibvirtXMLBase):
     __slots__ = ('hypervisor_type', 'vm_name', 'uuid', 'vcpu', 'max_mem',
                  'current_mem', 'numa', 'devices', 'seclabel',
                  'cputune', 'placement', 'current_vcpu', 'os', 'os_type',
-                 'os_arch', 'os_init')
+                 'os_arch', 'os_init', 'title')
 
     __uncompareable__ = base.LibvirtXMLBase.__uncompareable__
 
@@ -126,6 +126,11 @@ class VMXMLBase(base.LibvirtXMLBase):
                                  forbidden=None,
                                  parent_xpath='/',
                                  tag_name='uuid')
+        accessors.XMLElementText(property_name="title",
+                                 libvirtxml=self,
+                                 forbidden=None,
+                                 parent_xpath='/',
+                                 tag_name='title')
         accessors.XMLElementInt(property_name="vcpu",
                                 libvirtxml=self,
                                 forbidden=None,

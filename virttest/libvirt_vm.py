@@ -1301,9 +1301,14 @@ class VM(virt_vm.BaseVM):
                     # Try to destroy with shell command
                     logging.debug("Trying to shutdown VM with shell command")
                     try:
+                        if self.connect_uri and self.connect_uri.count("lxc"):
+                            raise virt_vm.VMError("Destroy lxc guest with"
+                                                  " virsh command.")
                         session = self.login()
                     except (remote.LoginError, virt_vm.VMError), e:
                         logging.debug(e)
+                        if self.state() == "paused":
+                            virsh.resume(self.name, uri=self.connect_uri)
                     else:
                         try:
                             # Send the shutdown command
@@ -1341,6 +1346,7 @@ class VM(virt_vm.BaseVM):
         Return VM's UUID.
         """
         uuid = virsh.domuuid(self.name, uri=self.connect_uri).stdout.strip()
+        logging.debug("uuid is %s", uuid)
         # only overwrite it if it's not set
         if self.uuid is None:
             self.uuid = uuid
@@ -1380,7 +1386,8 @@ class VM(virt_vm.BaseVM):
 
         :return: int with PID. If VM is not alive, returns None.
         """
-        pid_file = "/var/run/libvirt/qemu/%s.pid" % self.name
+        driver = virsh.driver(uri=self.connect_uri)
+        pid_file = "/var/run/libvirt/%s/%s.pid" % (driver, self.name)
         pid = None
         if os.path.exists(pid_file):
             try:
