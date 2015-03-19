@@ -720,7 +720,7 @@ def bootstrap(test_name, test_dir, base_dir, default_userspace_paths,
               check_modules, online_docs_url, restore_image=False,
               download_image=True, interactive=True, selinux=False,
               verbose=False, update_providers=False,
-              guest_os=defaults.DEFAULT_GUEST_OS):
+              guest_os=defaults.DEFAULT_GUEST_OS, force_update=False):
     """
     Common virt test assistant module.
 
